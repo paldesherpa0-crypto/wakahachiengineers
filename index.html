@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>若手エンジニア - マーケットプレイス MVP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0066cc;
+            --primary-dark: #004499;
+            --primary-light: #0080ff;
+            --secondary-color: #f0f4ff;
+            --text-dark: #1a1a1a;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --success-color: #00b359;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background-color: #f8f9fb;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 70px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .btn-nav {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-nav:hover {
+            opacity: 0.8;
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem 1rem;
+        }
+
+        .page {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .page.hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 4rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .pricing-preview {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-preview h2 {
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .price-card {
+            background: white;
+            border: 2px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .price-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .price-card.premium {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, white 100%);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .price-card h4 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        .price-card ul {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-card li {
+            padding: 0.5rem 0;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .price-card li:last-child {
+            border-bottom: none;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-color);
+        }
+
+        .footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 1rem;
+                flex-direction: column;
+                height: auto;
+                gap: 1rem;
+            }
+
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .pricing-cards,
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <nav class="navbar">
+            <div class="nav-left">
+                <h1 class="logo">🚀 若手エンジニア</h1>
+            </div>
+            <div class="nav-right">
+                <button class="btn-nav" onclick="showPage('home')">ホーム</button>
+                <button class="btn-nav" onclick="showPage('features')">機能</button>
+                <button class="btn-nav" onclick="showPage('pricing')">料金</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- ホームページ -->
+            <div id="home" class="page">
+                <div class="hero">
+                    <h2>日本で働くエンジニア、ここにいます。</h2>
+                    <p>100+ の優秀なエンジニアから、あなたにぴったりの人材を見つけましょう。</p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary" onclick="showPage('pricing')">今すぐ始める</button>
+                    </div>
+                </div>
+
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>🔍 スマート検索</h3>
+                        <p>スキル、経験年数、給与で検索。条件ぴったりのエンジニアが見つかる。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>⚡ ダイレクト連絡</h3>
+                        <p>採用担当者とエンジニアが直接つながる。仲介不要で時間も費用も削減。</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>💼 プロフィール充実</h3>
+                        <p>スキル、ポートフォリオ、給与条件が一目で分かる。</p>
+                    </div>
+                </div>
+
+                <div class="pricing-preview">
+                    <h2>シンプルな料金</h2>
+                    <div class="pricing-cards">
+                        <div class="price-card">
+                            <h4>通常</h4>
+                            <p class="price">¥50,000<span>/月</span></p>
+                            <ul>
+                                <li>✓ 全エンジニア検索</li>
+                                <li>✓ スカウト機能</li>
+                            </ul>
+                        </div>
+                        <div class="price-card premium">
+                            <h4>プレミアム</h4>
+                            <p class="price">¥100,000<span>/月</span></p>
+                            <ul>
+                                <li>✓ 全エンジニア検索</li>
+                                <li>✓ AI マッチング</li>
+                                <li>✓ 優先サポート</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 機能ページ -->
+            <div id="features" class="page hidden">
+                <div style="background: white; padding: 2rem; border-radius: 12px;">
+                    <h2 style="color: var(--primary-color); margin-bottom: 2rem;">主要機能</h2>
+                    <div class="features">
+                        <div class="feature-card">
+                            <h3>エンジニア検索</h3>
+                            <p>スキル、経験年数、給与、勤務地で検索。条件に合ったエンジニアが簡単に見つかります。</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>スカウト機能</h3>
+                            <p>気になったエンジニアに直接メッセージを送信。迅速なコミュニケーションが実現します。</p>
+                        </div>
+                        <div class="feature-card">
+                            <h3>プロフィール管理</h3>
+                            <p>詳細なプロフィール情報で、あなたにぴったりの人材が見つかりやすくなります。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 料金ページ -->
+            <div id="pricing" class="page hidden">
+                <div style="background: white; padding: 3rem; border-radius: 12px;">
+                    <h2 style="text-align: center; margin-bottom: 3rem;">料金プラン</h2>
+                    <div class="pricing-cards">
+                        <div class="price-card">
+                            <h4>通常メンバー</h4>
+                            <p class="price">¥50,000<span>/月</span></p>
+                            <ul>
+                                <li>✓ 全エンジニア検索</li>
+                                <li>✓ スカウト機能</li>
+                                <li>✓ メール・チャットサポート</li>
+                            </ul>
+                            <button class="btn-primary" style="width: 100%;">登録する</button>
+                        </div>
+                        <div class="price-card premium">
+                            <h4>プレミアムメンバー</h4>
+                            <p class="price">¥100,000<span>/月</span></p>
+                            <ul>
+                                <li>✓ 全エンジニア検索</li>
+                                <li>✓ AI マッチング機能</li>
+                                <li>✓ 優先サポート</li>
+                                <li>✓ 月次レポート</li>
+                            </ul>
+                            <button class="btn-primary" style="width: 100%;">登録する</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2026 若手エンジニア。All rights reserved.</p>
+            <p>Powered by Claude AI + Vercel</p>
+        </footer>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // すべてのページを非表示
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            // 指定されたページを表示
+            document.getElementById(pageId).classList.remove('hidden');
+            // ページトップにスクロール
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
