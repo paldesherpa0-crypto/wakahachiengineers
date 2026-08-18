@@ -3,438 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>若手エンジニア - マーケットプレイス MVP</title>
+    <title>若手エンジニア - 企業向けプラットフォーム</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        :root {
-            --primary-color: #0066cc;
-            --primary-dark: #004499;
-            --primary-light: #0080ff;
-            --secondary-color: #f0f4ff;
-            --text-dark: #1a1a1a;
-            --text-light: #666666;
-            --border-color: #e0e0e0;
-            --success-color: #00b359;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
-            background-color: #f8f9fb;
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            height: 70px;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .nav-right {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .btn-nav {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 0.5rem 1rem;
-            transition: opacity 0.3s ease;
-        }
-
-        .btn-nav:hover {
-            opacity: 0.8;
-        }
-
-        .app {
-            display: flex;
-            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0066cc 0%, #0080ff 100%);
             min-height: 100vh;
+            padding: 2rem;
         }
-
-        .main-content {
-            flex: 1;
-            max-width: 1400px;
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            width: 100%;
-            padding: 2rem 1rem;
         }
-
-        .page {
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        .page.hidden {
-            display: none;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .hero {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        .header {
             color: white;
-            padding: 4rem 2rem;
-            border-radius: 12px;
             text-align: center;
             margin-bottom: 3rem;
-            box-shadow: var(--shadow-lg);
         }
-
-        .hero h2 {
+        .header h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            font-weight: 700;
         }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-        }
-
-        .hero-buttons {
+        .tabs {
             display: flex;
             gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .feature-card h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-
-        .pricing-preview {
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
-            text-align: center;
             margin-bottom: 2rem;
         }
-
-        .pricing-preview h2 {
-            margin-bottom: 2rem;
-            font-size: 2rem;
-        }
-
-        .pricing-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .price-card {
-            background: white;
-            border: 2px solid var(--border-color);
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .price-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .price-card.premium {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, white 100%);
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .price-card h4 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-        }
-
-        .price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-        }
-
-        .price span {
-            font-size: 1rem;
-            color: var(--text-light);
-        }
-
-        .price-card ul {
-            list-style: none;
-            text-align: left;
-            margin-bottom: 1.5rem;
-        }
-
-        .price-card li {
-            padding: 0.5rem 0;
-            color: var(--text-light);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .price-card li:last-child {
-            border-bottom: none;
-        }
-
-        .btn-primary, .btn-secondary {
-            padding: 0.8rem 2rem;
+        .tab-btn {
+            padding: 1rem 2rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            background: white;
+            color: #0066cc;
+            transition: all 0.3s;
         }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        .tab-btn.active {
+            background: #0066cc;
             color: white;
         }
-
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #0066cc;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+            color: white;
+            width: 100%;
+        }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 8px 24px rgba(0,102,204,0.3);
         }
-
-        .btn-secondary {
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .success-message.show {
+            display: block;
+        }
+        .dashboard {
             background: white;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-        }
-
-        .btn-secondary:hover {
-            background: var(--secondary-color);
-        }
-
-        .footer {
-            background: var(--text-dark);
-            color: white;
             padding: 2rem;
-            text-align: center;
-            margin-top: auto;
-            border-top: 1px solid var(--border-color);
+            border-radius: 12px;
         }
-
-        .footer p {
+        .request-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #0066cc;
+        }
+        .request-card h3 {
+            color: #0066cc;
+            margin-bottom: 0.5rem;
+        }
+        .request-card p {
+            color: #666;
             margin: 0.5rem 0;
-            font-size: 0.9rem;
-            opacity: 0.9;
         }
-
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 0 1rem;
-                flex-direction: column;
-                height: auto;
-                gap: 1rem;
-            }
-
-            .hero h2 {
-                font-size: 1.8rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .pricing-cards,
-            .features {
-                grid-template-columns: 1fr;
-            }
+        .engineer-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #00b359;
+        }
+        .engineer-card h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .engineer-card p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0.3rem 0;
+        }
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+        .btn-small:hover {
+            background: #004499;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #0066cc 0%, #0080ff 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-box h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-box p {
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
-    <div class="app">
-        <nav class="navbar">
-            <div class="nav-left">
-                <h1 class="logo">🚀 若手エンジニア</h1>
-            </div>
-            <div class="nav-right">
-                <button class="btn-nav" onclick="showPage('home')">ホーム</button>
-                <button class="btn-nav" onclick="showPage('features')">機能</button>
-                <button class="btn-nav" onclick="showPage('pricing')">料金</button>
-            </div>
-        </nav>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 若手エンジニア</h1>
+            <p>企業とエンジニアをつなぐマーケットプレイス</p>
+        </div>
 
-        <main class="main-content">
-            <!-- ホームページ -->
-            <div id="home" class="page">
-                <div class="hero">
-                    <h2>日本で働くエンジニア、ここにいます。</h2>
-                    <p>100+ の優秀なエンジニアから、あなたにぴったりの人材を見つけましょう。</p>
-                    <div class="hero-buttons">
-                        <button class="btn-primary" onclick="showPage('pricing')">今すぐ始める</button>
-                    </div>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('company-form')">企業向けリクエスト</button>
+            <button class="tab-btn" onclick="switchTab('dashboard')">管理画面</button>
+        </div>
+
+        <!-- 企業向けリクエストフォーム -->
+        <div id="company-form" class="tab-content active">
+            <h2>人材リクエスト</h2>
+            <form id="requestForm" onsubmit="submitRequest(event)">
+                <div class="form-group">
+                    <label>企業名 *</label>
+                    <input type="text" name="companyName" required>
                 </div>
-
-                <div class="features">
-                    <div class="feature-card">
-                        <h3>🔍 スマート検索</h3>
-                        <p>スキル、経験年数、給与で検索。条件ぴったりのエンジニアが見つかる。</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>⚡ ダイレクト連絡</h3>
-                        <p>採用担当者とエンジニアが直接つながる。仲介不要で時間も費用も削減。</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>💼 プロフィール充実</h3>
-                        <p>スキル、ポートフォリオ、給与条件が一目で分かる。</p>
-                    </div>
+                <div class="form-group">
+                    <label>担当者名 *</label>
+                    <input type="text" name="contactName" required>
                 </div>
-
-                <div class="pricing-preview">
-                    <h2>シンプルな料金</h2>
-                    <div class="pricing-cards">
-                        <div class="price-card">
-                            <h4>通常</h4>
-                            <p class="price">¥50,000<span>/月</span></p>
-                            <ul>
-                                <li>✓ 全エンジニア検索</li>
-                                <li>✓ スカウト機能</li>
-                            </ul>
-                        </div>
-                        <div class="price-card premium">
-                            <h4>プレミアム</h4>
-                            <p class="price">¥100,000<span>/月</span></p>
-                            <ul>
-                                <li>✓ 全エンジニア検索</li>
-                                <li>✓ AI マッチング</li>
-                                <li>✓ 優先サポート</li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>メールアドレス *</label>
+                    <input type="email" name="email" required>
                 </div>
-            </div>
-
-            <!-- 機能ページ -->
-            <div id="features" class="page hidden">
-                <div style="background: white; padding: 2rem; border-radius: 12px;">
-                    <h2 style="color: var(--primary-color); margin-bottom: 2rem;">主要機能</h2>
-                    <div class="features">
-                        <div class="feature-card">
-                            <h3>エンジニア検索</h3>
-                            <p>スキル、経験年数、給与、勤務地で検索。条件に合ったエンジニアが簡単に見つかります。</p>
-                        </div>
-                        <div class="feature-card">
-                            <h3>スカウト機能</h3>
-                            <p>気になったエンジニアに直接メッセージを送信。迅速なコミュニケーションが実現します。</p>
-                        </div>
-                        <div class="feature-card">
-                            <h3>プロフィール管理</h3>
-                            <p>詳細なプロフィール情報で、あなたにぴったりの人材が見つかりやすくなります。</p>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>電話番号</label>
+                    <input type="tel" name="phone">
                 </div>
-            </div>
+                <div class="form-group">
+                    <label>希望スキル *</label>
+                    <input type="text" name="skills" placeholder="Python, React, Java等" required>
+                </div>
+                <div class="form-group">
+                    <label>希望年収範囲 *</label>
+                    <input type="text" name="salary" placeholder="例：400-600万円" required>
+                </div>
+                <div class="form-group">
+                    <label>希望勤務地 *</label>
+                    <select name="location" required>
+                        <option value="">選択してください</option>
+                        <option value="東京">東京</option>
+                        <option value="神奈川">神奈川</option>
+                        <option value="千葉">千葉</option>
+                        <option value="埼玉">埼玉</option>
+                        <option value="大阪">大阪</option>
+                        <option value="福岡">福岡</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>詳細要件</label>
+                    <textarea name="requirements" placeholder="その他の要件があれば記入してください"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">リクエストを送信</button>
+                <div class="success-message" id="successMessage">
+                    ✅ リクエストが送信されました。担当者より1営業日以内にご連絡します。
+                </div>
+            </form>
+        </div>
 
-            <!-- 料金ページ -->
-            <div id="pricing" class="page hidden">
-                <div style="background: white; padding: 3rem; border-radius: 12px;">
-                    <h2 style="text-align: center; margin-bottom: 3rem;">料金プラン</h2>
-                    <div class="pricing-cards">
-                        <div class="price-card">
-                            <h4>通常メンバー</h4>
-                            <p class="price">¥50,000<span>/月</span></p>
-                            <ul>
-                                <li>✓ 全エンジニア検索</li>
-                                <li>✓ スカウト機能</li>
-                                <li>✓ メール・チャットサポート</li>
-                            </ul>
-                            <button class="btn-primary" style="width: 100%;">登録する</button>
-                        </div>
-                        <div class="price-card premium">
-                            <h4>プレミアムメンバー</h4>
-                            <p class="price">¥100,000<span>/月</span></p>
-                            <ul>
-                                <li>✓ 全エンジニア検索</li>
-                                <li>✓ AI マッチング機能</li>
-                                <li>✓ 優先サポート</li>
-                                <li>✓ 月次レポート</li>
-                            </ul>
-                            <button class="btn-primary" style="width: 100%;">登録する</button>
-                        </div>
-                    </div>
+        <!-- Palden 管理画面 -->
+        <div id="dashboard" class="tab-content">
+            <h2>Palden 管理画面</h2>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <h3 id="requestCount">0</h3>
+                    <p>受付したリクエスト</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="engineerCount">456</h3>
+                    <p>登録エンジニア</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="matchCount">0</h3>
+                    <p>マッチング完了</p>
                 </div>
             </div>
-        </main>
 
-        <footer class="footer">
-            <p>© 2026 若手エンジニア。All rights reserved.</p>
-            <p>Powered by Claude AI + Vercel</p>
-        </footer>
+            <h3>企業からのリクエスト一覧</h3>
+            <div id="requestsList"></div>
+        </div>
     </div>
 
     <script>
-        function showPage(pageId) {
-            // すべてのページを非表示
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.add('hidden');
+        const requests = [];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
-            // 指定されたページを表示
-            document.getElementById(pageId).classList.remove('hidden');
-            // ページトップにスクロール
-            window.scrollTo(0, 0);
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'dashboard') {
+                loadDashboard();
+            }
         }
+
+        function submitRequest(event) {
+            event.preventDefault();
+            
+            const formData = {
+                companyName: document.querySelector('input[name="companyName"]').value,
+                contactName: document.querySelector('input[name="contactName"]').value,
+                email: document.querySelector('input[name="email"]').value,
+                phone: document.querySelector('input[name="phone"]').value,
+                skills: document.querySelector('input[name="skills"]').value,
+                salary: document.querySelector('input[name="salary"]').value,
+                location: document.querySelector('select[name="location"]').value,
+                requirements: document.querySelector('textarea[name="requirements"]').value,
+                timestamp: new Date().toISOString()
+            };
+
+            requests.push(formData);
+            localStorage.setItem('requests', JSON.stringify(requests));
+
+            document.getElementById('successMessage').classList.add('show');
+            document.getElementById('requestForm').reset();
+
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.remove('show');
+            }, 3000);
+        }
+
+        function loadDashboard() {
+            const savedRequests = JSON.parse(localStorage.getItem('requests') || '[]');
+            document.getElementById('requestCount').textContent = savedRequests.length;
+
+            const requestsList = document.getElementById('requestsList');
+            requestsList.innerHTML = '';
+
+            if (savedRequests.length === 0) {
+                requestsList.innerHTML = '<p style="color: #999;">まだリクエストがありません</p>';
+            } else {
+                savedRequests.forEach((req, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'request-card';
+                    card.innerHTML = `
+                        <h3>${req.companyName}</h3>
+                        <p><strong>担当者：</strong> ${req.contactName}</p>
+                        <p><strong>メール：</strong> ${req.email}</p>
+                        <p><strong>希望スキル：</strong> ${req.skills}</p>
+                        <p><strong>年収：</strong> ${req.salary}</p>
+                        <p><strong>勤務地：</strong> ${req.location}</p>
+                        <p><strong>日時：</strong> ${new Date(req.timestamp).toLocaleString('ja-JP')}</p>
+                    `;
+                    requestsList.appendChild(card);
+                });
+            }
+        }
+
+        window.addEventListener('load', () => {
+            const savedRequests = JSON.parse(localStorage.getItem('requests') || '[]');
+            requests.push(...savedRequests);
+        });
     </script>
 </body>
 </html>
