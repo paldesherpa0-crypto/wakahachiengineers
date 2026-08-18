@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>若手エンジニア - 企業向けプラットフォーム</title>
+    <title>若手エンジニア - マーケットプレイス</title>
     <style>
         * {
             margin: 0;
@@ -17,7 +17,7 @@
             padding: 2rem;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         .header {
@@ -33,6 +33,7 @@
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
         .tab-btn {
             padding: 1rem 2rem;
@@ -74,15 +75,10 @@
             border: 2px solid #ddd;
             border-radius: 6px;
             font-size: 1rem;
-            transition: border-color 0.3s;
         }
         input:focus, textarea:focus, select:focus {
             outline: none;
             border-color: #0066cc;
-        }
-        textarea {
-            resize: vertical;
-            min-height: 120px;
         }
         .btn {
             padding: 1rem 2rem;
@@ -91,16 +87,12 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-primary {
             background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
             color: white;
             width: 100%;
         }
-        .btn-primary:hover {
+        .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0,102,204,0.3);
         }
         .success-message {
             background: #d4edda;
@@ -113,11 +105,6 @@
         .success-message.show {
             display: block;
         }
-        .dashboard {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-        }
         .request-card {
             background: #f8f9fa;
             padding: 1.5rem;
@@ -125,46 +112,25 @@
             margin-bottom: 1rem;
             border-left: 4px solid #0066cc;
         }
-        .request-card h3 {
-            color: #0066cc;
-            margin-bottom: 0.5rem;
-        }
-        .request-card p {
-            color: #666;
-            margin: 0.5rem 0;
-        }
         .engineer-card {
             background: #f8f9fa;
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: 8px;
             margin-bottom: 1rem;
             border-left: 4px solid #00b359;
         }
         .engineer-card h4 {
-            color: #333;
+            color: #0066cc;
             margin-bottom: 0.5rem;
         }
         .engineer-card p {
             color: #666;
-            font-size: 0.9rem;
             margin: 0.3rem 0;
-        }
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            background: #0066cc;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 0.5rem;
-        }
-        .btn-small:hover {
-            background: #004499;
+            font-size: 0.95rem;
         }
         .stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
@@ -177,10 +143,25 @@
         }
         .stat-box h3 {
             font-size: 2rem;
-            margin-bottom: 0.5rem;
         }
-        .stat-box p {
-            opacity: 0.9;
+        .search-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .search-box input, .search-box select {
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+        }
+        h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        h3 {
+            margin-bottom: 1rem;
+            color: #333;
         }
     </style>
 </head>
@@ -192,12 +173,31 @@
         </div>
 
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('company-form')">企業向けリクエスト</button>
+            <button class="tab-btn active" onclick="switchTab('engineer-search')">エンジニア検索</button>
+            <button class="tab-btn" onclick="switchTab('company-form')">企業向けリクエスト</button>
+            <button class="tab-btn" onclick="switchTab('engineer-form')">エンジニア情報入力</button>
             <button class="tab-btn" onclick="switchTab('dashboard')">管理画面</button>
         </div>
 
+        <!-- エンジニア検索 -->
+        <div id="engineer-search" class="tab-content active">
+            <h2>エンジニア検索</h2>
+            <div class="search-box">
+                <input type="text" id="skillSearch" placeholder="スキルを検索（Python, Java等）">
+                <select id="locationSearch">
+                    <option value="">勤務地を選択</option>
+                    <option value="東京">東京</option>
+                    <option value="神奈川">神奈川</option>
+                    <option value="大阪">大阪</option>
+                    <option value="福岡">福岡</option>
+                </select>
+                <button class="btn" onclick="searchEngineers()">検索</button>
+            </div>
+            <div id="engineersList"></div>
+        </div>
+
         <!-- 企業向けリクエストフォーム -->
-        <div id="company-form" class="tab-content active">
+        <div id="company-form" class="tab-content">
             <h2>人材リクエスト</h2>
             <form id="requestForm" onsubmit="submitRequest(event)">
                 <div class="form-group">
@@ -213,10 +213,6 @@
                     <input type="email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label>電話番号</label>
-                    <input type="tel" name="phone">
-                </div>
-                <div class="form-group">
                     <label>希望スキル *</label>
                     <input type="text" name="skills" placeholder="Python, React, Java等" required>
                 </div>
@@ -230,40 +226,65 @@
                         <option value="">選択してください</option>
                         <option value="東京">東京</option>
                         <option value="神奈川">神奈川</option>
-                        <option value="千葉">千葉</option>
-                        <option value="埼玉">埼玉</option>
                         <option value="大阪">大阪</option>
                         <option value="福岡">福岡</option>
-                        <option value="その他">その他</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">リクエストを送信</button>
+                <div class="success-message" id="requestSuccess">✅ リクエストが送信されました</div>
+            </form>
+        </div>
+
+        <!-- エンジニア情報入力フォーム -->
+        <div id="engineer-form" class="tab-content">
+            <h2>エンジニア情報入力</h2>
+            <form id="engineerForm" onsubmit="submitEngineerInfo(event)">
+                <div class="form-group">
+                    <label>名前 *</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>スキル（カンマ区切り）*</label>
+                    <input type="text" name="skills" placeholder="Python, React, Java等" required>
+                </div>
+                <div class="form-group">
+                    <label>日本実務経験年数 *</label>
+                    <input type="number" name="experience" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>希望年収（万円）*</label>
+                    <input type="number" name="salary" min="100" required>
+                </div>
+                <div class="form-group">
+                    <label>希望勤務地 *</label>
+                    <select name="location" required>
+                        <option value="">選択してください</option>
+                        <option value="東京">東京</option>
+                        <option value="神奈川">神奈川</option>
+                        <option value="大阪">大阪</option>
+                        <option value="福岡">福岡</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>詳細要件</label>
-                    <textarea name="requirements" placeholder="その他の要件があれば記入してください"></textarea>
+                    <label>メールアドレス *</label>
+                    <input type="email" name="email" required>
                 </div>
-                <button type="submit" class="btn btn-primary">リクエストを送信</button>
-                <div class="success-message" id="successMessage">
-                    ✅ リクエストが送信されました。担当者より1営業日以内にご連絡します。
-                </div>
+                <button type="submit" class="btn">情報を登録</button>
+                <div class="success-message" id="engineerSuccess">✅ 情報が登録されました</div>
             </form>
         </div>
 
         <!-- Palden 管理画面 -->
         <div id="dashboard" class="tab-content">
             <h2>Palden 管理画面</h2>
-            
             <div class="stats">
                 <div class="stat-box">
                     <h3 id="requestCount">0</h3>
-                    <p>受付したリクエスト</p>
+                    <p>企業リクエスト</p>
                 </div>
                 <div class="stat-box">
                     <h3 id="engineerCount">456</h3>
                     <p>登録エンジニア</p>
-                </div>
-                <div class="stat-box">
-                    <h3 id="matchCount">0</h3>
-                    <p>マッチング完了</p>
                 </div>
             </div>
 
@@ -273,80 +294,133 @@
     </div>
 
     <script>
+        const engineers = [];
         const requests = [];
 
+        async function initEngineers() {
+            const defaultEngineers = [
+                { id: 1, name: 'Bikram Nepali', skills: 'Python, Java', experience: 5, salary: 500, location: '東京', email: 'bikram@test.com' },
+                { id: 2, name: 'DHUNGANA NABIN', skills: 'React, Node.js', experience: 3, salary: 400, location: '神奈川', email: 'nabin@test.com' }
+            ];
+            engineers.push(...defaultEngineers);
+            document.getElementById('engineerCount').textContent = 456;
+        }
+
         function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
 
-            if (tabName === 'dashboard') {
+            if (tabName === 'engineer-search') {
+                searchEngineers();
+            } else if (tabName === 'dashboard') {
                 loadDashboard();
             }
+        }
+
+        function searchEngineers() {
+            const skill = document.getElementById('skillSearch').value.toLowerCase();
+            const location = document.getElementById('locationSearch').value;
+
+            const filtered = engineers.filter(e => {
+                const skillMatch = !skill || e.skills.toLowerCase().includes(skill);
+                const locationMatch = !location || e.location === location;
+                return skillMatch && locationMatch;
+            });
+
+            const list = document.getElementById('engineersList');
+            list.innerHTML = '';
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<p style="color: #999;">該当するエンジニアがいません</p>';
+                return;
+            }
+
+            filtered.forEach(eng => {
+                const card = document.createElement('div');
+                card.className = 'engineer-card';
+                card.innerHTML = `
+                    <h4>${eng.name}</h4>
+                    <p><strong>スキル:</strong> ${eng.skills}</p>
+                    <p><strong>経験年数:</strong> ${eng.experience}年</p>
+                    <p><strong>希望年収:</strong> ${eng.salary}万円</p>
+                    <p><strong>勤務地:</strong> ${eng.location}</p>
+                `;
+                list.appendChild(card);
+            });
         }
 
         function submitRequest(event) {
             event.preventDefault();
             
-            const formData = {
+            const request = {
                 companyName: document.querySelector('input[name="companyName"]').value,
                 contactName: document.querySelector('input[name="contactName"]').value,
                 email: document.querySelector('input[name="email"]').value,
-                phone: document.querySelector('input[name="phone"]').value,
                 skills: document.querySelector('input[name="skills"]').value,
                 salary: document.querySelector('input[name="salary"]').value,
                 location: document.querySelector('select[name="location"]').value,
-                requirements: document.querySelector('textarea[name="requirements"]').value,
                 timestamp: new Date().toISOString()
             };
 
-            requests.push(formData);
+            requests.push(request);
             localStorage.setItem('requests', JSON.stringify(requests));
-
-            document.getElementById('successMessage').classList.add('show');
+            document.getElementById('requestSuccess').classList.add('show');
             document.getElementById('requestForm').reset();
 
-            setTimeout(() => {
-                document.getElementById('successMessage').classList.remove('show');
-            }, 3000);
+            setTimeout(() => document.getElementById('requestSuccess').classList.remove('show'), 3000);
+        }
+
+        function submitEngineerInfo(event) {
+            event.preventDefault();
+            
+            const engineer = {
+                id: engineers.length + 1,
+                name: document.querySelector('input[name="name"]').value,
+                skills: document.querySelector('input[name="skills"]').value,
+                experience: parseInt(document.querySelector('input[name="experience"]').value),
+                salary: parseInt(document.querySelector('input[name="salary"]').value),
+                location: document.querySelector('select[name="location"]').value,
+                email: document.querySelector('input[name="email"]').value
+            };
+
+            engineers.push(engineer);
+            localStorage.setItem('engineers', JSON.stringify(engineers));
+            document.getElementById('engineerSuccess').classList.add('show');
+            document.getElementById('engineerForm').reset();
+
+            setTimeout(() => document.getElementById('engineerSuccess').classList.remove('show'), 3000);
         }
 
         function loadDashboard() {
             const savedRequests = JSON.parse(localStorage.getItem('requests') || '[]');
             document.getElementById('requestCount').textContent = savedRequests.length;
 
-            const requestsList = document.getElementById('requestsList');
-            requestsList.innerHTML = '';
+            const list = document.getElementById('requestsList');
+            list.innerHTML = '';
 
             if (savedRequests.length === 0) {
-                requestsList.innerHTML = '<p style="color: #999;">まだリクエストがありません</p>';
-            } else {
-                savedRequests.forEach((req, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'request-card';
-                    card.innerHTML = `
-                        <h3>${req.companyName}</h3>
-                        <p><strong>担当者：</strong> ${req.contactName}</p>
-                        <p><strong>メール：</strong> ${req.email}</p>
-                        <p><strong>希望スキル：</strong> ${req.skills}</p>
-                        <p><strong>年収：</strong> ${req.salary}</p>
-                        <p><strong>勤務地：</strong> ${req.location}</p>
-                        <p><strong>日時：</strong> ${new Date(req.timestamp).toLocaleString('ja-JP')}</p>
-                    `;
-                    requestsList.appendChild(card);
-                });
+                list.innerHTML = '<p style="color: #999;">リクエストなし</p>';
+                return;
             }
+
+            savedRequests.forEach(req => {
+                const card = document.createElement('div');
+                card.className = 'request-card';
+                card.innerHTML = `
+                    <h4>${req.companyName}</h4>
+                    <p><strong>担当者:</strong> ${req.contactName}</p>
+                    <p><strong>メール:</strong> ${req.email}</p>
+                    <p><strong>希望スキル:</strong> ${req.skills}</p>
+                    <p><strong>年収:</strong> ${req.salary}</p>
+                    <p><strong>勤務地:</strong> ${req.location}</p>
+                `;
+                list.appendChild(card);
+            });
         }
 
-        window.addEventListener('load', () => {
-            const savedRequests = JSON.parse(localStorage.getItem('requests') || '[]');
-            requests.push(...savedRequests);
-        });
+        window.addEventListener('load', initEngineers);
     </script>
 </body>
 </html>
