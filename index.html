@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>若手エンジニア - マーケットプレイス</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
     <style>
         * {
             margin: 0;
@@ -105,13 +107,6 @@
         .success-message.show {
             display: block;
         }
-        .request-card {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border-left: 4px solid #0066cc;
-        }
         .engineer-card {
             background: #f8f9fa;
             padding: 1.5rem;
@@ -163,6 +158,11 @@
             margin-bottom: 1rem;
             color: #333;
         }
+        .loading {
+            text-align: center;
+            color: #999;
+            padding: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -193,7 +193,7 @@
                 </select>
                 <button class="btn" onclick="searchEngineers()">検索</button>
             </div>
-            <div id="engineersList"></div>
+            <div id="engineersList" class="loading">読み込み中...</div>
         </div>
 
         <!-- 企業向けリクエストフォーム -->
@@ -283,7 +283,7 @@
                     <p>企業リクエスト</p>
                 </div>
                 <div class="stat-box">
-                    <h3 id="engineerCount">456</h3>
+                    <h3 id="engineerCount">0</h3>
                     <p>登録エンジニア</p>
                 </div>
             </div>
@@ -294,16 +294,39 @@
     </div>
 
     <script>
-        const engineers = [];
-        const requests = [];
+        // Firebase 設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQBuMoXK_ogsUBMi2QNIto3ETljHhb-h0",
+            authDomain: "wakahachiengineers.firebaseapp.com",
+            projectId: "wakahachiengineers",
+            storageBucket: "wakahachiengineers.appspot.com",
+            messagingSenderId: "169915728446",
+            appId: "1:169915728446:web:a4oe32154fBf0f54ac76cf"
+        };
 
-        async function initEngineers() {
-            const defaultEngineers = [
-                { id: 1, name: 'Bikram Nepali', skills: 'Python, Java', experience: 5, salary: 500, location: '東京', email: 'bikram@test.com' },
-                { id: 2, name: 'DHUNGANA NABIN', skills: 'React, Node.js', experience: 3, salary: 400, location: '神奈川', email: 'nabin@test.com' }
-            ];
-            engineers.push(...defaultEngineers);
-            document.getElementById('engineerCount').textContent = 456;
+        // Firebase 初期化
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let allEngineers = [];
+
+        // Firestore からエンジニアデータを取得
+        async function loadEngineers() {
+            try {
+                const snapshot = await db.collection('engineers').get();
+                allEngineers = [];
+                snapshot.forEach(doc => {
+                    allEngineers.push({ id: doc.id, ...doc.data() });
+                });
+                document.getElementById('engineerCount').textContent = allEngineers.length;
+                console.log(`✅ ${allEngineers.length}名のエンジニアを読み込み`);
+                if (allEngineers.length === 0) {
+                    document.getElementById('engineersList').innerHTML = '<p class="loading">エンジニアデータを読み込み中...</p>';
+                }
+            } catch (error) {
+                console.error('Firestore 読み込みエラー:', error);
+                document.getElementById('engineerCount').textContent = '?';
+            }
         }
 
         function switchTab(tabName) {
@@ -323,9 +346,9 @@
             const skill = document.getElementById('skillSearch').value.toLowerCase();
             const location = document.getElementById('locationSearch').value;
 
-            const filtered = engineers.filter(e => {
-                const skillMatch = !skill || e.skills.toLowerCase().includes(skill);
-                const locationMatch = !location || e.location === location;
+            const filtered = allEngineers.filter(e => {
+                const skillMatch = !skill || (e.skills && e.skills.toLowerCase().includes(skill));
+                const locationMatch = !location || e.address?.includes(location);
                 return skillMatch && locationMatch;
             });
 
@@ -342,16 +365,16 @@
                 card.className = 'engineer-card';
                 card.innerHTML = `
                     <h4>${eng.name}</h4>
-                    <p><strong>スキル:</strong> ${eng.skills}</p>
-                    <p><strong>経験年数:</strong> ${eng.experience}年</p>
-                    <p><strong>希望年収:</strong> ${eng.salary}万円</p>
-                    <p><strong>勤務地:</strong> ${eng.location}</p>
+                    <p><strong>スキル:</strong> ${eng.skills || '未設定'}</p>
+                    <p><strong>経験年数:</strong> ${eng.experience || 0}年</p>
+                    <p><strong>希望年収:</strong> ${eng.salary || 0}万円</p>
+                    <p><strong>メール:</strong> ${eng.email || '未設定'}</p>
                 `;
                 list.appendChild(card);
             });
         }
 
-        function submitRequest(event) {
+        async function submitRequest(event) {
             event.preventDefault();
             
             const request = {
@@ -364,63 +387,78 @@
                 timestamp: new Date().toISOString()
             };
 
-            requests.push(request);
-            localStorage.setItem('requests', JSON.stringify(requests));
-            document.getElementById('requestSuccess').classList.add('show');
-            document.getElementById('requestForm').reset();
-
-            setTimeout(() => document.getElementById('requestSuccess').classList.remove('show'), 3000);
+            try {
+                await db.collection('requests').add(request);
+                document.getElementById('requestSuccess').classList.add('show');
+                document.getElementById('requestForm').reset();
+                setTimeout(() => document.getElementById('requestSuccess').classList.remove('show'), 3000);
+            } catch (error) {
+                alert('送信エラー：' + error.message);
+            }
         }
 
-        function submitEngineerInfo(event) {
+        async function submitEngineerInfo(event) {
             event.preventDefault();
             
             const engineer = {
-                id: engineers.length + 1,
                 name: document.querySelector('input[name="name"]').value,
                 skills: document.querySelector('input[name="skills"]').value,
                 experience: parseInt(document.querySelector('input[name="experience"]').value),
                 salary: parseInt(document.querySelector('input[name="salary"]').value),
                 location: document.querySelector('select[name="location"]').value,
-                email: document.querySelector('input[name="email"]').value
+                email: document.querySelector('input[name="email"]').value,
+                timestamp: new Date().toISOString()
             };
 
-            engineers.push(engineer);
-            localStorage.setItem('engineers', JSON.stringify(engineers));
-            document.getElementById('engineerSuccess').classList.add('show');
-            document.getElementById('engineerForm').reset();
-
-            setTimeout(() => document.getElementById('engineerSuccess').classList.remove('show'), 3000);
-        }
-
-        function loadDashboard() {
-            const savedRequests = JSON.parse(localStorage.getItem('requests') || '[]');
-            document.getElementById('requestCount').textContent = savedRequests.length;
-
-            const list = document.getElementById('requestsList');
-            list.innerHTML = '';
-
-            if (savedRequests.length === 0) {
-                list.innerHTML = '<p style="color: #999;">リクエストなし</p>';
-                return;
+            try {
+                await db.collection('engineers').add(engineer);
+                document.getElementById('engineerSuccess').classList.add('show');
+                document.getElementById('engineerForm').reset();
+                setTimeout(() => document.getElementById('engineerSuccess').classList.remove('show'), 3000);
+                await loadEngineers();
+            } catch (error) {
+                alert('登録エラー：' + error.message);
             }
-
-            savedRequests.forEach(req => {
-                const card = document.createElement('div');
-                card.className = 'request-card';
-                card.innerHTML = `
-                    <h4>${req.companyName}</h4>
-                    <p><strong>担当者:</strong> ${req.contactName}</p>
-                    <p><strong>メール:</strong> ${req.email}</p>
-                    <p><strong>希望スキル:</strong> ${req.skills}</p>
-                    <p><strong>年収:</strong> ${req.salary}</p>
-                    <p><strong>勤務地:</strong> ${req.location}</p>
-                `;
-                list.appendChild(card);
-            });
         }
 
-        window.addEventListener('load', initEngineers);
+        async function loadDashboard() {
+            try {
+                const snapshot = await db.collection('requests').get();
+                document.getElementById('requestCount').textContent = snapshot.size;
+
+                const list = document.getElementById('requestsList');
+                list.innerHTML = '';
+
+                if (snapshot.size === 0) {
+                    list.innerHTML = '<p style="color: #999;">リクエストなし</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const req = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'engineer-card';
+                    card.innerHTML = `
+                        <h4>${req.companyName}</h4>
+                        <p><strong>担当者:</strong> ${req.contactName}</p>
+                        <p><strong>メール:</strong> ${req.email}</p>
+                        <p><strong>希望スキル:</strong> ${req.skills}</p>
+                        <p><strong>年収:</strong> ${req.salary}</p>
+                        <p><strong>勤務地:</strong> ${req.location}</p>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (error) {
+                console.error('ダッシュボード読み込みエラー:', error);
+            }
+        }
+
+        // 初期化
+        window.addEventListener('load', loadEngineers);
     </script>
 </body>
 </html>
+ユーザーが「どのコード？」と聞いているので、上記のテキストコードを見せました。これでユーザーが GitHub の index.html を編集する際に、全てを削除してこのコードを貼り付けることができます。
+
+👆 ↑ ここまでが完全なコードです。
+
