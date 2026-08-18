@@ -176,4 +176,281 @@
             <button class="tab-btn active" onclick="switchTab('engineer-search')">エンジニア検索</button>
             <button class="tab-btn" onclick="switchTab('company-form')">企業向けリクエスト</button>
             <button class="tab-btn" onclick="switchTab('engineer-form')">エンジニア情報入力</button>
-            <button class="tab-btn" onclick="switchTab('dashboard')">管理画面</b
+            <button class="tab-btn" onclick="switchTab('dashboard')">管理画面</button>
+        </div>
+
+        <!-- エンジニア検索 -->
+        <div id="engineer-search" class="tab-content active">
+            <h2>エンジニア検索</h2>
+            <div class="search-box">
+                <input type="text" id="skillSearch" placeholder="スキルを検索（Python, Java等）">
+                <select id="locationSearch">
+                    <option value="">勤務地を選択</option>
+                    <option value="東京">東京</option>
+                    <option value="神奈川">神奈川</option>
+                    <option value="大阪">大阪</option>
+                    <option value="福岡">福岡</option>
+                </select>
+                <button class="btn" onclick="searchEngineers()">検索</button>
+            </div>
+            <div id="engineersList" class="loading">読み込み中...</div>
+        </div>
+
+        <!-- 企業向けリクエストフォーム -->
+        <div id="company-form" class="tab-content">
+            <h2>人材リクエスト</h2>
+            <form id="requestForm" onsubmit="submitRequest(event)">
+                <div class="form-group">
+                    <label>企業名 *</label>
+                    <input type="text" name="companyName" required>
+                </div>
+                <div class="form-group">
+                    <label>担当者名 *</label>
+                    <input type="text" name="contactName" required>
+                </div>
+                <div class="form-group">
+                    <label>メールアドレス *</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>希望スキル *</label>
+                    <input type="text" name="skills" placeholder="Python, React, Java等" required>
+                </div>
+                <div class="form-group">
+                    <label>希望年収範囲 *</label>
+                    <input type="text" name="salary" placeholder="例：400-600万円" required>
+                </div>
+                <div class="form-group">
+                    <label>希望勤務地 *</label>
+                    <select name="location" required>
+                        <option value="">選択してください</option>
+                        <option value="東京">東京</option>
+                        <option value="神奈川">神奈川</option>
+                        <option value="大阪">大阪</option>
+                        <option value="福岡">福岡</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">リクエストを送信</button>
+                <div class="success-message" id="requestSuccess">✅ リクエストが送信されました</div>
+            </form>
+        </div>
+
+        <!-- エンジニア情報入力フォーム -->
+        <div id="engineer-form" class="tab-content">
+            <h2>エンジニア情報入力</h2>
+            <form id="engineerForm" onsubmit="submitEngineerInfo(event)">
+                <div class="form-group">
+                    <label>名前 *</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>スキル（カンマ区切り）*</label>
+                    <input type="text" name="skills" placeholder="Python, React, Java等" required>
+                </div>
+                <div class="form-group">
+                    <label>日本実務経験年数 *</label>
+                    <input type="number" name="experience" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>希望年収（万円）*</label>
+                    <input type="number" name="salary" min="100" required>
+                </div>
+                <div class="form-group">
+                    <label>希望勤務地 *</label>
+                    <select name="location" required>
+                        <option value="">選択してください</option>
+                        <option value="東京">東京</option>
+                        <option value="神奈川">神奈川</option>
+                        <option value="大阪">大阪</option>
+                        <option value="福岡">福岡</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>メールアドレス *</label>
+                    <input type="email" name="email" required>
+                </div>
+                <button type="submit" class="btn">情報を登録</button>
+                <div class="success-message" id="engineerSuccess">✅ 情報が登録されました</div>
+            </form>
+        </div>
+
+        <!-- Palden 管理画面 -->
+        <div id="dashboard" class="tab-content">
+            <h2>Palden 管理画面</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <h3 id="requestCount">0</h3>
+                    <p>企業リクエスト</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="engineerCount">0</h3>
+                    <p>登録エンジニア</p>
+                </div>
+            </div>
+
+            <h3>企業からのリクエスト一覧</h3>
+            <div id="requestsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase 設定
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQBuMoXK_ogsUBMi2QNIto3ETljHhb-h0",
+            authDomain: "wakahachiengineers.firebaseapp.com",
+            projectId: "wakahachiengineers",
+            storageBucket: "wakahachiengineers.appspot.com",
+            messagingSenderId: "169915728446",
+            appId: "1:169915728446:web:a46e32154f8f07fa54c76f"
+        };
+
+        // Firebase 初期化
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let allEngineers = [];
+
+        // Firestore からエンジニアデータを取得
+        async function loadEngineers() {
+            try {
+                const snapshot = await db.collection('engineers').get();
+                allEngineers = [];
+                snapshot.forEach(doc => {
+                    allEngineers.push({ id: doc.id, ...doc.data() });
+                });
+                document.getElementById('engineerCount').textContent = allEngineers.length;
+                console.log(`✅ ${allEngineers.length}名のエンジニアを読み込み`);
+            } catch (error) {
+                console.error('Firestore 読み込みエラー:', error);
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'engineer-search') {
+                searchEngineers();
+            } else if (tabName === 'dashboard') {
+                loadDashboard();
+            }
+        }
+
+        function searchEngineers() {
+            const skill = document.getElementById('skillSearch').value.toLowerCase();
+            const location = document.getElementById('locationSearch').value;
+
+            const filtered = allEngineers.filter(e => {
+                const skillMatch = !skill || (e.skills && e.skills.toLowerCase().includes(skill));
+                const locationMatch = !location || e.address?.includes(location);
+                return skillMatch && locationMatch;
+            });
+
+            const list = document.getElementById('engineersList');
+            list.innerHTML = '';
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<p style="color: #999;">該当するエンジニアがいません</p>';
+                return;
+            }
+
+            filtered.forEach(eng => {
+                const card = document.createElement('div');
+                card.className = 'engineer-card';
+                card.innerHTML = `
+                    <h4>${eng.name}</h4>
+                    <p><strong>スキル:</strong> ${eng.skills || '未設定'}</p>
+                    <p><strong>経験年数:</strong> ${eng.experience || 0}年</p>
+                    <p><strong>希望年収:</strong> ${eng.salary || 0}万円</p>
+                    <p><strong>メール:</strong> ${eng.email || '未設定'}</p>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        async function submitRequest(event) {
+            event.preventDefault();
+            
+            const request = {
+                companyName: document.querySelector('input[name="companyName"]').value,
+                contactName: document.querySelector('input[name="contactName"]').value,
+                email: document.querySelector('input[name="email"]').value,
+                skills: document.querySelector('input[name="skills"]').value,
+                salary: document.querySelector('input[name="salary"]').value,
+                location: document.querySelector('select[name="location"]').value,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                await db.collection('requests').add(request);
+                document.getElementById('requestSuccess').classList.add('show');
+                document.getElementById('requestForm').reset();
+                setTimeout(() => document.getElementById('requestSuccess').classList.remove('show'), 3000);
+            } catch (error) {
+                alert('送信エラー：' + error.message);
+            }
+        }
+
+        async function submitEngineerInfo(event) {
+            event.preventDefault();
+            
+            const engineer = {
+                name: document.querySelector('input[name="name"]').value,
+                skills: document.querySelector('input[name="skills"]').value,
+                experience: parseInt(document.querySelector('input[name="experience"]').value),
+                salary: parseInt(document.querySelector('input[name="salary"]').value),
+                location: document.querySelector('select[name="location"]').value,
+                email: document.querySelector('input[name="email"]').value,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                await db.collection('engineers').add(engineer);
+                document.getElementById('engineerSuccess').classList.add('show');
+                document.getElementById('engineerForm').reset();
+                setTimeout(() => document.getElementById('engineerSuccess').classList.remove('show'), 3000);
+                await loadEngineers();
+            } catch (error) {
+                alert('登録エラー：' + error.message);
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const snapshot = await db.collection('requests').get();
+                document.getElementById('requestCount').textContent = snapshot.size;
+
+                const list = document.getElementById('requestsList');
+                list.innerHTML = '';
+
+                if (snapshot.size === 0) {
+                    list.innerHTML = '<p style="color: #999;">リクエストなし</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const req = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'engineer-card';
+                    card.innerHTML = `
+                        <h4>${req.companyName}</h4>
+                        <p><strong>担当者:</strong> ${req.contactName}</p>
+                        <p><strong>メール:</strong> ${req.email}</p>
+                        <p><strong>希望スキル:</strong> ${req.skills}</p>
+                        <p><strong>年収:</strong> ${req.salary}</p>
+                        <p><strong>勤務地:</strong> ${req.location}</p>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (error) {
+                console.error('ダッシュボード読み込みエラー:', error);
+            }
+        }
+
+        // 初期化
+        window.addEventListener('load', loadEngineers);
+    </script>
+</body>
+</html>
