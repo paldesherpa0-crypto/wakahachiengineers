@@ -107,6 +107,17 @@
         .success-message.show {
             display: block;
         }
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
         .engineer-card {
             background: #f8f9fa;
             padding: 1.5rem;
@@ -163,6 +174,27 @@
             color: #999;
             padding: 2rem;
         }
+        .import-section {
+            background: #f0f7ff;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 2px solid #0066cc;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0066cc, #00b359);
+            width: 0%;
+            transition: width 0.3s;
+        }
     </style>
 </head>
 <body>
@@ -176,6 +208,7 @@
             <button class="tab-btn active" onclick="switchTab('engineer-search')">エンジニア検索</button>
             <button class="tab-btn" onclick="switchTab('company-form')">企業向けリクエスト</button>
             <button class="tab-btn" onclick="switchTab('engineer-form')">エンジニア情報入力</button>
+            <button class="tab-btn" onclick="switchTab('import-data')">データインポート</button>
             <button class="tab-btn" onclick="switchTab('dashboard')">管理画面</button>
         </div>
 
@@ -274,6 +307,26 @@
             </form>
         </div>
 
+        <!-- データインポート -->
+        <div id="import-data" class="tab-content">
+            <h2>📊 データインポート（Palden専用）</h2>
+            <div class="import-section">
+                <h3>456名のエンジニアデータをインポート</h3>
+                <p style="margin-bottom: 1rem; color: #666;">CSV ファイルをアップロードして、Firestore に一括投入します。</p>
+                <div class="form-group">
+                    <label>CSV ファイルを選択 *</label>
+                    <input type="file" id="csvFile" accept=".csv" required>
+                </div>
+                <button class="btn" onclick="importCSV()">インポート開始</button>
+                <div class="progress-bar" id="progressBar" style="display: none;">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div id="progressText" style="text-align: center; margin-top: 0.5rem; display: none; color: #0066cc; font-weight: 600;"></div>
+                <div class="success-message" id="importSuccess">✅ インポート完了！ 456 名のエンジニアデータが投入されました</div>
+                <div class="error-message" id="importError"></div>
+            </div>
+        </div>
+
         <!-- Palden 管理画面 -->
         <div id="dashboard" class="tab-content">
             <h2>Palden 管理画面</h2>
@@ -368,6 +421,61 @@
                 `;
                 list.appendChild(card);
             });
+        }
+
+        async function importCSV() {
+            const fileInput = document.getElementById('csvFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('CSV ファイルを選択してください');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const csv = e.target.result;
+                    const lines = csv.split('\n');
+                    const headers = lines[0].split(',');
+                    
+                    document.getElementById('progressBar').style.display = 'block';
+                    document.getElementById('progressText').style.display = 'block';
+                    document.getElementById('importSuccess').classList.remove('show');
+                    document.getElementById('importError').classList.remove('show');
+
+                    let imported = 0;
+                    for (let i = 1; i < lines.length; i++) {
+                        if (lines[i].trim() === '') continue;
+
+                        const values = lines[i].split(',');
+                        const engineer = {};
+                        headers.forEach((header, idx) => {
+                            engineer[header.trim()] = values[idx]?.trim() || '';
+                        });
+
+                        try {
+                            await db.collection('engineers').add(engineer);
+                            imported++;
+                            const progress = (imported / (lines.length - 1)) * 100;
+                            document.getElementById('progressFill').style.width = progress + '%';
+                            document.getElementById('progressText').textContent = `投入中... ${imported}/${lines.length - 1}`;
+                        } catch (error) {
+                            console.error(`行 ${i} のエラー:`, error);
+                        }
+                    }
+
+                    document.getElementById('progressBar').style.display = 'none';
+                    document.getElementById('progressText').style.display = 'none';
+                    document.getElementById('importSuccess').classList.add('show');
+                    fileInput.value = '';
+                    await loadEngineers();
+                } catch (error) {
+                    document.getElementById('importError').textContent = 'インポートエラー：' + error.message;
+                    document.getElementById('importError').classList.add('show');
+                }
+            };
+            reader.readAsText(file);
         }
 
         async function submitRequest(event) {
