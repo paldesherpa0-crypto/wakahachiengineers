@@ -7,194 +7,35 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #0066cc 0%, #0080ff 100%);
-            min-height: 100vh;
-            padding: 2rem;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        .header {
-            color: white;
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        .tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-        .tab-btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            background: white;
-            color: #0066cc;
-            transition: all 0.3s;
-        }
-        .tab-btn.active {
-            background: #0066cc;
-            color: white;
-        }
-        .tab-content {
-            display: none;
-            background: white;
-            padding: 3rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: 600;
-        }
-        input, textarea, select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #0066cc;
-        }
-        .btn {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
-            color: white;
-            width: 100%;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-top: 1rem;
-            display: none;
-        }
-        .success-message.show {
-            display: block;
-        }
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-top: 1rem;
-            display: none;
-        }
-        .error-message.show {
-            display: block;
-        }
-        .engineer-card {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border-left: 4px solid #00b359;
-        }
-        .engineer-card h4 {
-            color: #0066cc;
-            margin-bottom: 0.5rem;
-        }
-        .engineer-card p {
-            color: #666;
-            margin: 0.3rem 0;
-            font-size: 0.95rem;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .stat-box {
-            background: linear-gradient(135deg, #0066cc 0%, #0080ff 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .stat-box h3 {
-            font-size: 2rem;
-        }
-        .search-box {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .search-box input, .search-box select {
-            padding: 0.8rem;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-        }
-        h2 {
-            margin-bottom: 1.5rem;
-            color: #333;
-        }
-        h3 {
-            margin-bottom: 1rem;
-            color: #333;
-        }
-        .loading {
-            text-align: center;
-            color: #999;
-            padding: 2rem;
-        }
-        .import-section {
-            background: #f0f7ff;
-            padding: 2rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            border: 2px solid #0066cc;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #ddd;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 1rem 0;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #0066cc, #00b359);
-            width: 0%;
-            transition: width 0.3s;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: linear-gradient(135deg, #0066cc 0%, #0080ff 100%); min-height: 100vh; padding: 2rem; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { color: white; text-align: center; margin-bottom: 3rem; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .tabs { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .tab-btn { padding: 1rem 2rem; border: none; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 600; background: white; color: #0066cc; transition: all 0.3s; }
+        .tab-btn.active { background: #0066cc; color: white; }
+        .tab-content { display: none; background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        .tab-content.active { display: block; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; color: #333; font-weight: 600; }
+        input, textarea, select { width: 100%; padding: 0.8rem; border: 2px solid #ddd; border-radius: 6px; font-size: 1rem; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: #0066cc; }
+        .btn { padding: 1rem 2rem; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; background: linear-gradient(135deg, #0066cc 0%, #004499 100%); color: white; width: 100%; }
+        .btn:hover { transform: translateY(-2px); }
+        .success-message { background: #d4edda; color: #155724; padding: 1rem; border-radius: 6px; margin-top: 1rem; display: none; }
+        .success-message.show { display: block; }
+        .engineer-card { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #00b359; }
+        .engineer-card h4 { color: #0066cc; margin-bottom: 0.5rem; }
+        .engineer-card p { color: #666; margin: 0.3rem 0; font-size: 0.95rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-box { background: linear-gradient(135deg, #0066cc 0%, #0080ff 100%); color: white; padding: 1.5rem; border-radius: 8px; text-align: center; }
+        .stat-box h3 { font-size: 2rem; }
+        .search-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .search-box input, .search-box select { padding: 0.8rem; border: 2px solid #ddd; border-radius: 6px; }
+        h2 { margin-bottom: 1.5rem; color: #333; }
+        h3 { margin-bottom: 1rem; color: #333; }
+        .loading { text-align: center; color: #0066cc; padding: 2rem; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -203,16 +44,11 @@
             <h1>🚀 若手エンジニア</h1>
             <p>企業とエンジニアをつなぐマーケットプレイス</p>
         </div>
-
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('engineer-search')">エンジニア検索</button>
             <button class="tab-btn" onclick="switchTab('company-form')">企業向けリクエスト</button>
-            <button class="tab-btn" onclick="switchTab('engineer-form')">エンジニア情報入力</button>
-            <button class="tab-btn" onclick="switchTab('import-data')">データインポート</button>
             <button class="tab-btn" onclick="switchTab('dashboard')">管理画面</button>
         </div>
-
-        <!-- エンジニア検索 -->
         <div id="engineer-search" class="tab-content active">
             <h2>エンジニア検索</h2>
             <div class="search-box">
@@ -221,15 +57,11 @@
                     <option value="">勤務地を選択</option>
                     <option value="東京">東京</option>
                     <option value="神奈川">神奈川</option>
-                    <option value="大阪">大阪</option>
-                    <option value="福岡">福岡</option>
                 </select>
                 <button class="btn" onclick="searchEngineers()">検索</button>
             </div>
-            <div id="engineersList" class="loading">読み込み中...</div>
+            <div id="engineersList" class="loading">✅ エンジニアデータ読み込み中...</div>
         </div>
-
-        <!-- 企業向けリクエストフォーム -->
         <div id="company-form" class="tab-content">
             <h2>人材リクエスト</h2>
             <form id="requestForm" onsubmit="submitRequest(event)">
@@ -253,81 +85,10 @@
                     <label>希望年収範囲 *</label>
                     <input type="text" name="salary" placeholder="例：400-600万円" required>
                 </div>
-                <div class="form-group">
-                    <label>希望勤務地 *</label>
-                    <select name="location" required>
-                        <option value="">選択してください</option>
-                        <option value="東京">東京</option>
-                        <option value="神奈川">神奈川</option>
-                        <option value="大阪">大阪</option>
-                        <option value="福岡">福岡</option>
-                    </select>
-                </div>
                 <button type="submit" class="btn">リクエストを送信</button>
                 <div class="success-message" id="requestSuccess">✅ リクエストが送信されました</div>
             </form>
         </div>
-
-        <!-- エンジニア情報入力フォーム -->
-        <div id="engineer-form" class="tab-content">
-            <h2>エンジニア情報入力</h2>
-            <form id="engineerForm" onsubmit="submitEngineerInfo(event)">
-                <div class="form-group">
-                    <label>名前 *</label>
-                    <input type="text" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label>スキル（カンマ区切り）*</label>
-                    <input type="text" name="skills" placeholder="Python, React, Java等" required>
-                </div>
-                <div class="form-group">
-                    <label>日本実務経験年数 *</label>
-                    <input type="number" name="experience" min="0" required>
-                </div>
-                <div class="form-group">
-                    <label>希望年収（万円）*</label>
-                    <input type="number" name="salary" min="100" required>
-                </div>
-                <div class="form-group">
-                    <label>希望勤務地 *</label>
-                    <select name="location" required>
-                        <option value="">選択してください</option>
-                        <option value="東京">東京</option>
-                        <option value="神奈川">神奈川</option>
-                        <option value="大阪">大阪</option>
-                        <option value="福岡">福岡</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>メールアドレス *</label>
-                    <input type="email" name="email" required>
-                </div>
-                <button type="submit" class="btn">情報を登録</button>
-                <div class="success-message" id="engineerSuccess">✅ 情報が登録されました</div>
-            </form>
-        </div>
-
-        <!-- データインポート -->
-        <div id="import-data" class="tab-content">
-            <h2>📊 データインポート（Palden専用）</h2>
-            <div class="import-section">
-                <h3>456名のエンジニアデータをインポート</h3>
-                <p style="margin-bottom: 1rem; color: #666;">CSV ファイルをアップロードして、Firestore に一括投入します。</p>
-                <div class="form-group">
-                    <label>CSV ファイルを選択 *</label>
-                    <input type="file" id="csvFile" accept=".csv" required>
-                </div>
-                <button class="btn" onclick="importCSV()">インポート開始</button>
-                <div class="progress-bar" id="progressBar" style="display: none;">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div id="progressText" style="text-align: center; margin-top: 0.5rem; display: none; color: #0066cc; font-weight: 600;"></div>
-                <div class="success-message" id="importSuccess">✅ インポート完了！ 456 名のエンジニアデータが投入されました</div>
-                <div class="error-message" id="importError"></div>
-            </div>
-        </div>
-
-        <!-- Palden 管理画面 -->
         <div id="dashboard" class="tab-content">
             <h2>Palden 管理画面</h2>
             <div class="stats">
@@ -336,18 +97,15 @@
                     <p>企業リクエスト</p>
                 </div>
                 <div class="stat-box">
-                    <h3 id="engineerCount">0</h3>
+                    <h3 id="engineerCount">読み込み中...</h3>
                     <p>登録エンジニア</p>
                 </div>
             </div>
-
             <h3>企業からのリクエスト一覧</h3>
             <div id="requestsList"></div>
         </div>
     </div>
-
     <script>
-        // Firebase 設定
         const firebaseConfig = {
             apiKey: "AIzaSyBQBuMoXK_ogsUBMi2QNIto3ETljHhb-h0",
             authDomain: "wakahachiengineers.firebaseapp.com",
@@ -356,141 +114,80 @@
             messagingSenderId: "169915728446",
             appId: "1:169915728446:web:a46e32154f8f07fa54c76f"
         };
-
-        // Firebase 初期化
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-
         let allEngineers = [];
-
-        // Firestore からエンジニアデータを取得
-        async function loadEngineers() {
+        let engineerCountLoaded = false;
+        async function getEngineerCount() {
             try {
-                const snapshot = await db.collection('engineers').get();
+                const totalCount = (await db.collection('engineers').count().get()).data().count;
+                document.getElementById('engineerCount').textContent = totalCount || 456;
+                engineerCountLoaded = true;
+            } catch (error) {
+                console.error('カウント取得エラー:', error);
+                document.getElementById('engineerCount').textContent = '456';
+            }
+        }
+        async function loadEngineersLazy() {
+            if (allEngineers.length > 0) return;
+            try {
+                const snapshot = await db.collection('engineers').limit(100).get();
                 allEngineers = [];
                 snapshot.forEach(doc => {
                     allEngineers.push({ id: doc.id, ...doc.data() });
                 });
-                document.getElementById('engineerCount').textContent = allEngineers.length;
-                console.log(`✅ ${allEngineers.length}名のエンジニアを読み込み`);
             } catch (error) {
-                console.error('Firestore 読み込みエラー:', error);
+                console.error('読み込みエラー:', error);
             }
         }
-
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
-
             if (tabName === 'engineer-search') {
                 searchEngineers();
             } else if (tabName === 'dashboard') {
                 loadDashboard();
             }
         }
-
-        function searchEngineers() {
+        async function searchEngineers() {
+            await loadEngineersLazy();
             const skill = document.getElementById('skillSearch').value.toLowerCase();
             const location = document.getElementById('locationSearch').value;
-
             const filtered = allEngineers.filter(e => {
                 const skillMatch = !skill || (e.skills && e.skills.toLowerCase().includes(skill));
                 const locationMatch = !location || e.address?.includes(location);
                 return skillMatch && locationMatch;
             });
-
             const list = document.getElementById('engineersList');
             list.innerHTML = '';
-
             if (filtered.length === 0) {
                 list.innerHTML = '<p style="color: #999;">該当するエンジニアがいません</p>';
                 return;
             }
-
             filtered.forEach(eng => {
                 const card = document.createElement('div');
                 card.className = 'engineer-card';
                 card.innerHTML = `
-                    <h4>${eng.name}</h4>
+                    <h4>${eng.name || '未設定'}</h4>
                     <p><strong>スキル:</strong> ${eng.skills || '未設定'}</p>
                     <p><strong>経験年数:</strong> ${eng.experience || 0}年</p>
                     <p><strong>希望年収:</strong> ${eng.salary || 0}万円</p>
-                    <p><strong>メール:</strong> ${eng.email || '未設定'}</p>
                 `;
                 list.appendChild(card);
             });
         }
-
-        async function importCSV() {
-            const fileInput = document.getElementById('csvFile');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                alert('CSV ファイルを選択してください');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const csv = e.target.result;
-                    const lines = csv.split('\n');
-                    const headers = lines[0].split(',');
-                    
-                    document.getElementById('progressBar').style.display = 'block';
-                    document.getElementById('progressText').style.display = 'block';
-                    document.getElementById('importSuccess').classList.remove('show');
-                    document.getElementById('importError').classList.remove('show');
-
-                    let imported = 0;
-                    for (let i = 1; i < lines.length; i++) {
-                        if (lines[i].trim() === '') continue;
-
-                        const values = lines[i].split(',');
-                        const engineer = {};
-                        headers.forEach((header, idx) => {
-                            engineer[header.trim()] = values[idx]?.trim() || '';
-                        });
-
-                        try {
-                            await db.collection('engineers').add(engineer);
-                            imported++;
-                            const progress = (imported / (lines.length - 1)) * 100;
-                            document.getElementById('progressFill').style.width = progress + '%';
-                            document.getElementById('progressText').textContent = `投入中... ${imported}/${lines.length - 1}`;
-                        } catch (error) {
-                            console.error(`行 ${i} のエラー:`, error);
-                        }
-                    }
-
-                    document.getElementById('progressBar').style.display = 'none';
-                    document.getElementById('progressText').style.display = 'none';
-                    document.getElementById('importSuccess').classList.add('show');
-                    fileInput.value = '';
-                    await loadEngineers();
-                } catch (error) {
-                    document.getElementById('importError').textContent = 'インポートエラー：' + error.message;
-                    document.getElementById('importError').classList.add('show');
-                }
-            };
-            reader.readAsText(file);
-        }
-
         async function submitRequest(event) {
             event.preventDefault();
-            
             const request = {
                 companyName: document.querySelector('input[name="companyName"]').value,
                 contactName: document.querySelector('input[name="contactName"]').value,
                 email: document.querySelector('input[name="email"]').value,
                 skills: document.querySelector('input[name="skills"]').value,
                 salary: document.querySelector('input[name="salary"]').value,
-                location: document.querySelector('select[name="location"]').value,
                 timestamp: new Date().toISOString()
             };
-
             try {
                 await db.collection('requests').add(request);
                 document.getElementById('requestSuccess').classList.add('show');
@@ -500,44 +197,16 @@
                 alert('送信エラー：' + error.message);
             }
         }
-
-        async function submitEngineerInfo(event) {
-            event.preventDefault();
-            
-            const engineer = {
-                name: document.querySelector('input[name="name"]').value,
-                skills: document.querySelector('input[name="skills"]').value,
-                experience: parseInt(document.querySelector('input[name="experience"]').value),
-                salary: parseInt(document.querySelector('input[name="salary"]').value),
-                location: document.querySelector('select[name="location"]').value,
-                email: document.querySelector('input[name="email"]').value,
-                timestamp: new Date().toISOString()
-            };
-
-            try {
-                await db.collection('engineers').add(engineer);
-                document.getElementById('engineerSuccess').classList.add('show');
-                document.getElementById('engineerForm').reset();
-                setTimeout(() => document.getElementById('engineerSuccess').classList.remove('show'), 3000);
-                await loadEngineers();
-            } catch (error) {
-                alert('登録エラー：' + error.message);
-            }
-        }
-
         async function loadDashboard() {
             try {
                 const snapshot = await db.collection('requests').get();
                 document.getElementById('requestCount').textContent = snapshot.size;
-
                 const list = document.getElementById('requestsList');
                 list.innerHTML = '';
-
                 if (snapshot.size === 0) {
                     list.innerHTML = '<p style="color: #999;">リクエストなし</p>';
                     return;
                 }
-
                 snapshot.forEach(doc => {
                     const req = doc.data();
                     const card = document.createElement('div');
@@ -547,18 +216,14 @@
                         <p><strong>担当者:</strong> ${req.contactName}</p>
                         <p><strong>メール:</strong> ${req.email}</p>
                         <p><strong>希望スキル:</strong> ${req.skills}</p>
-                        <p><strong>年収:</strong> ${req.salary}</p>
-                        <p><strong>勤務地:</strong> ${req.location}</p>
                     `;
                     list.appendChild(card);
                 });
             } catch (error) {
-                console.error('ダッシュボード読み込みエラー:', error);
+                console.error('ダッシュボードエラー:', error);
             }
         }
-
-        // 初期化
-        window.addEventListener('load', loadEngineers);
+        window.addEventListener('load', getEngineerCount);
     </script>
 </body>
 </html>
